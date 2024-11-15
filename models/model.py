@@ -18,6 +18,8 @@ def preprocess_data(data, value_col='value'):
 def zscore_detection(data, value_col='value', threshold=3):
     print("Running Z-Score Detection...")
     z_scores = np.abs(stats.zscore(data[value_col]))
+    print("Z-score logs: ")
+    print(z_scores[0:10], '\n', threshold)
     anomalies = z_scores > threshold
     data['zscore_anomaly'] = anomalies
     data['zscore_score'] = z_scores
@@ -64,7 +66,6 @@ def build_autoencoder(data, value_col='value', sequence_length=24):
         sequences.append(data[value_col].values[i:(i + sequence_length)])
     sequences = np.array(sequences).reshape(-1, sequence_length, 1)
     
-    # Define the autoencoder model
     input_layer = layers.Input(shape=(sequence_length, 1))
     encoded = layers.LSTM(16, activation='relu')(input_layer)
     encoded = layers.Dense(8, activation='relu')(encoded)
@@ -94,12 +95,23 @@ def ensemble_detection(data):
     data = isolation_forest_detection(data)
     data = robust_covariance_detection(data)
     data = rolling_statistics_detection(data)
-    data = build_autoencoder(data)
+    # data = build_autoencoder(data)
     
     anomaly_columns = [col for col in data.columns if col.endswith('_anomaly')]
     data['ensemble_anomaly'] = data[anomaly_columns].sum(axis=1) >= 2
     print(f"Ensemble detection identified {data['ensemble_anomaly'].sum()} anomalies")
-    return data
+    return data    
+
+def data_explore(parameter, path):
+    df = pd.read_csv(path)
+    data = df['value']
+    print(f"{parameter} Data exploration...")
+    print(f" {parameter} observations: ", len(data))
+    print(f' Min of {parameter}:', min(data))
+    print(f' Max of {parameter}:', max(data))
+    print(f' Mean of {parameter}:', data.mean())
+    print(f' Standard deviation of {parameter}:', data.std())
+    print(f' Median of {parameter}:', data.median(), '\n')
 
 def plot_results(data, timestamp_col='timestamp', value_col='value', param_name="parameter"):
     print("Plotting and saving results...")
@@ -146,7 +158,11 @@ def process_telemetry_file(file_path, param_name="parameter"):
 
 def analyze_all_parameters(directory_path):
     print(f"Analyzing all parameters in directory: {directory_path}...")
-    file_paths = {file.split('.')[0]: os.path.join(directory_path, file) for file in os.listdir(directory_path) if file.endswith('.csv')}
+    file_paths = {file.split('.')[0]: os.path.join(directory_path, file) for file in os.listdir(directory_path) if file.endswith('.csv') and not file.startswith('Wheel')}
+    print(file_paths)
+    for param, file_path in file_paths.items():
+        data_explore(param, file_path)
+
     results = {}
     for param, file_path in file_paths.items():
         print(f"Processing {param}...")
