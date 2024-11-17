@@ -53,20 +53,6 @@ The dataset comprises five time-series CSV files containing telemetry data:
 - **Wheel RPM**  
 - **Wheel Temperature**  
 
-### Data Characteristics:  
-- **Duration**: 2001–2018 (common subset).  
-- **Records**: 500,000–750,000 per file.  
-- **Format**: Time-stamped telemetry readings.  
-
----
-
-## Preprocessing  
-1. **Missing Values**: Handled using backfilling and front filling.  
-2. **Outliers**: Retained for anomaly detection.  
-3. **Normalization**: Standard Scaling applied to standardize features.  
-
----
-
 ## Methodology  
 ### Techniques Used:  
 - **Z-Score Analysis**: Flags deviations from the mean.  
