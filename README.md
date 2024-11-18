@@ -75,14 +75,6 @@ Scatter plots and line graphs highlight detected anomalies over telemetry time s
 
 ---
 
-## Tools and Technologies  
-- **Programming**: Python  
-- **Libraries**: Pandas, NumPy, Scikit-learn, TensorFlow, Matplotlib  
-- **Environment**: Google Colab, Fedora OS  
-- **Hardware**: Intel i5 (13th Gen), NVIDIA RTX 2050 (4GB VRAM), 16GB RAM  
-
----
-
 ## Limitations  
 1. Limited dataset size may affect generalization.  
 2. Ensemble methods could further improve performance.  
